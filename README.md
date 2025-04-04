@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server for interacting with the Datadog API.
 
+<a href="https://glama.ai/mcp/servers/@GeLi2001/datadog-mcp-server">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@GeLi2001/datadog-mcp-server/badge" alt="Shopify MCP server" />
+</a>
+
 ## Features
 
 - **Monitoring**: Access monitor data and configurations
