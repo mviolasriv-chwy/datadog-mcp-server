@@ -16,6 +16,7 @@ A Model Context Protocol (MCP) server for interacting with the Datadog API.
 - **Incidents**: Access incident management data
 - **API Integration**: Direct integration with Datadog's v1 and v2 APIs
 - **Comprehensive Error Handling**: Clear error messages for API and authentication issues
+- **Service-Specific Endpoints**: Support for different endpoints for logs and metrics
 
 ## Prerequisites
 
@@ -56,15 +57,37 @@ Create a `.env` file with your Datadog credentials:
 DD_API_KEY=your_api_key_here
 DD_APP_KEY=your_app_key_here
 DD_SITE=datadoghq.com
+DD_LOGS_SITE=datadoghq.com
+DD_METRICS_SITE=datadoghq.com
 ```
 
+**Note**: `DD_LOGS_SITE` and `DD_METRICS_SITE` are optional and will default to the value of `DD_SITE` if not specified.
+
 ### Command-line Arguments
+
+Basic usage with global site setting:
 
 ```bash
 datadog-mcp-server --apiKey=your_api_key --appKey=your_app_key --site=datadoghq.eu
 ```
 
-Note: The site argument doesn't need `https://` - it will be added automatically.
+Advanced usage with service-specific endpoints:
+
+```bash
+datadog-mcp-server --apiKey=your_api_key --appKey=your_app_key --site=datadoghq.com --logsSite=logs.datadoghq.com --metricsSite=metrics.datadoghq.com
+```
+
+Note: Site arguments don't need `https://` - it will be added automatically.
+
+### Regional Endpoints
+
+Different Datadog regions have different endpoints:
+
+- US (Default): `datadoghq.com`
+- EU: `datadoghq.eu`
+- US3 (GovCloud): `ddog-gov.com`
+- US5: `us5.datadoghq.com`
+- AP1: `ap1.datadoghq.com`
 
 ### Usage with Claude Desktop
 
@@ -83,6 +106,31 @@ Add this to your `claude_desktop_config.json`:
         "<YOUR_APP_KEY>",
         "--site",
         "<YOUR_DD_SITE>(e.g us5.datadoghq.com)"
+      ]
+    }
+  }
+}
+```
+
+For more advanced configurations with separate endpoints for logs and metrics:
+
+```json
+{
+  "mcpServers": {
+    "datadog": {
+      "command": "npx",
+      "args": [
+        "datadog-mcp-server",
+        "--apiKey",
+        "<YOUR_API_KEY>",
+        "--appKey",
+        "<YOUR_APP_KEY>",
+        "--site",
+        "<YOUR_DD_SITE>",
+        "--logsSite",
+        "<YOUR_LOGS_SITE>",
+        "--metricsSite",
+        "<YOUR_METRICS_SITE>"
       ]
     }
   }
@@ -224,6 +272,7 @@ If you encounter a 403 Forbidden error, verify that:
 1. Your API key and Application key are correct
 2. The keys have the necessary permissions to access the requested resources
 3. Your account has access to the requested data
+4. You're using the correct endpoint for your region (e.g., `datadoghq.eu` for EU customers)
 
 ## Debugging
 
@@ -242,6 +291,7 @@ Common issues:
 - 403 Forbidden: Authentication issue with Datadog API keys
 - API key or App key format invalid: Ensure you're using the full key strings
 - Site configuration errors: Make sure you're using the correct Datadog domain
+- Endpoint mismatches: Verify that service-specific endpoints are correctly set if you're using separate domains for logs and metrics
 
 ## License
 

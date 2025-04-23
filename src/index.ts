@@ -27,17 +27,26 @@ dotenv.config();
 // Define environment variables - from command line or .env file
 const DD_API_KEY = argv.apiKey || process.env.DD_API_KEY;
 const DD_APP_KEY = argv.appKey || process.env.DD_APP_KEY;
-let DD_SITE = argv.site || process.env.DD_SITE || "datadoghq.com";
+
+// Get site configuration - defines the base domain for Datadog APIs
+const DD_SITE = argv.site || process.env.DD_SITE || "datadoghq.com";
+
+// Define service-specific endpoints for different Datadog services
+// This follows Datadog's recommended approach for configuring regional endpoints
+const DD_LOGS_SITE = argv.logsSite || process.env.DD_LOGS_SITE || DD_SITE;
+const DD_METRICS_SITE =
+  argv.metricsSite || process.env.DD_METRICS_SITE || DD_SITE;
 
 // Remove https:// prefix if it exists to prevent double prefix issues
-if (DD_SITE.startsWith("https://")) {
-  DD_SITE = DD_SITE.substring(8);
-}
+const cleanupUrl = (url: string) =>
+  url.startsWith("https://") ? url.substring(8) : url;
 
-// Store in process.env for backwards compatibility
+// Store clean values in process.env for backwards compatibility
 process.env.DD_API_KEY = DD_API_KEY;
 process.env.DD_APP_KEY = DD_APP_KEY;
-process.env.DD_SITE = DD_SITE;
+process.env.DD_SITE = cleanupUrl(DD_SITE);
+process.env.DD_LOGS_SITE = cleanupUrl(DD_LOGS_SITE);
+process.env.DD_METRICS_SITE = cleanupUrl(DD_METRICS_SITE);
 
 // Validate required environment variables
 if (!DD_API_KEY) {
@@ -55,6 +64,7 @@ if (!DD_APP_KEY) {
 }
 
 // Initialize Datadog client tools
+// We initialize each tool which will use the appropriate site configuration
 getMonitors.initialize();
 getMonitor.initialize();
 getDashboards.initialize();

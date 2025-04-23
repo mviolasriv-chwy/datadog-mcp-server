@@ -13,6 +13,8 @@ type SearchLogsParams = {
     cursor?: string;
   };
   limit?: number;
+  apiKey?: string;
+  appKey?: string;
 };
 
 let configuration: client.Configuration;
@@ -28,9 +30,9 @@ export const searchLogs = {
 
     configuration = client.createConfiguration(configOpts);
 
-    if (process.env.DD_SITE) {
+    if (process.env.DD_LOGS_SITE) {
       configuration.setServerVariables({
-        site: process.env.DD_SITE
+        site: process.env.DD_LOGS_SITE
       });
     }
 
@@ -40,7 +42,18 @@ export const searchLogs = {
 
   execute: async (params: SearchLogsParams) => {
     try {
-      const { filter, sort, page, limit } = params;
+      const {
+        apiKey = process.env.DD_API_KEY,
+        appKey = process.env.DD_APP_KEY,
+        filter,
+        sort,
+        page,
+        limit
+      } = params;
+
+      if (!apiKey || !appKey) {
+        throw new Error("API Key and App Key are required");
+      }
 
       const apiInstance = new v2.LogsApi(configuration);
 
@@ -52,15 +65,15 @@ export const searchLogs = {
         page: page
       };
 
-      // Directly call with fetch to use the documented POST endpoint
+      // Use DD_LOGS_SITE environment variable instead of DD_SITE
       const apiUrl = `https://${
-        process.env.DD_SITE || "datadoghq.com"
+        process.env.DD_LOGS_SITE || "datadoghq.com"
       }/api/v2/logs/events/search`;
 
       const headers = {
         "Content-Type": "application/json",
-        "DD-API-KEY": process.env.DD_API_KEY || "",
-        "DD-APPLICATION-KEY": process.env.DD_APP_KEY || ""
+        "DD-API-KEY": apiKey,
+        "DD-APPLICATION-KEY": appKey
       };
 
       const response = await fetch(apiUrl, {

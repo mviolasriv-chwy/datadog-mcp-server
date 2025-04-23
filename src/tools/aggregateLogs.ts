@@ -38,9 +38,9 @@ export const aggregateLogs = {
 
     configuration = client.createConfiguration(configOpts);
 
-    if (process.env.DD_SITE) {
+    if (process.env.DD_LOGS_SITE) {
       configuration.setServerVariables({
-        site: process.env.DD_SITE
+        site: process.env.DD_LOGS_SITE
       });
     }
 
@@ -54,7 +54,7 @@ export const aggregateLogs = {
 
       // Directly call with fetch to use the documented aggregation endpoint
       const apiUrl = `https://${
-        process.env.DD_SITE || "datadoghq.com"
+        process.env.DD_LOGS_SITE || "datadoghq.com"
       }/api/v2/logs/analytics/aggregate`;
 
       const headers = {

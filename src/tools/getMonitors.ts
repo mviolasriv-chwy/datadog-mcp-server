@@ -20,9 +20,9 @@ export const getMonitors = {
 
     configuration = client.createConfiguration(configOpts);
 
-    if (process.env.DD_SITE) {
+    if (process.env.DD_METRICS_SITE) {
       configuration.setServerVariables({
-        site: process.env.DD_SITE
+        site: process.env.DD_METRICS_SITE
       });
     }
   },
