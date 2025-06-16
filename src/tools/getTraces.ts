@@ -54,6 +54,8 @@ export const getTraces = {
         },
       };
 
+      console.log("Error fetching traces:", apiParams);
+      
       const response = await apiInstance.listSpans(apiParams);
       return response;
     } catch (error) {

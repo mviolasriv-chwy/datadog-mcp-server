@@ -168,7 +168,7 @@ server.tool(
     q: z.string().optional()
   },
   async (args) => {
-    const result = await getMetrics.execute(args);
+    const result = await getTraces.execute(args);
     return {
       content: [{ type: "text", text: JSON.stringify(result) }]
     };
