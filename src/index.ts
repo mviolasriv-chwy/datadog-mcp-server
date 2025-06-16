@@ -7,6 +7,7 @@ import minimist from "minimist";
 import { z } from "zod";
 
 // Import tools
+import { getTraces } from "./tools/getTraces.js";
 import { aggregateLogs } from "./tools/aggregateLogs.js";
 import { getDashboard } from "./tools/getDashboard.js";
 import { getDashboards } from "./tools/getDashboards.js";
@@ -75,6 +76,7 @@ getEvents.initialize();
 getIncidents.initialize();
 searchLogs.initialize();
 aggregateLogs.initialize();
+getTraces.initialize();
 
 // Set up MCP server
 const server = new McpServer({
@@ -148,6 +150,20 @@ server.tool(
 server.tool(
   "get-metrics",
   "List available metrics from Datadog. Optionally use the q parameter to search for specific metrics matching a pattern. Helpful for discovering metrics to use in monitors or dashboards.",
+  {
+    q: z.string().optional()
+  },
+  async (args) => {
+    const result = await getMetrics.execute(args);
+    return {
+      content: [{ type: "text", text: JSON.stringify(result) }]
+    };
+  }
+);
+
+server.tool(
+  "get-traces",
+  "List available traces from Datadog. Optionally use the q parameter to search for specific traces matching a pattern. Helpful for discovering traces to use in understanding coding.",
   {
     q: z.string().optional()
   },
