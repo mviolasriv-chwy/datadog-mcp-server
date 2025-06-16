@@ -2,6 +2,9 @@ import { client, v2 } from "@datadog/datadog-api-client";
 
 type GetTracesParams = {
   q?: string;
+  from: string;
+  to: string;
+  limit: number;
 };
 
 let configuration: client.Configuration;
@@ -37,15 +40,15 @@ export const getTraces = {
           data: {
             attributes: {
               filter: {
-                from: "now-15m",
+                from: params.from,
                 query: queryStr,
-                to: "now",
+                to: params.to,
               },
               options: {
                 timezone: "GMT",
               },
               page: {
-                limit: 25,
+                limit: params.limit,
               },
               sort: "timestamp",
             },

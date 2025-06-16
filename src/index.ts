@@ -165,7 +165,10 @@ server.tool(
   "get-traces",
   "List available traces from Datadog. Optionally use the q parameter to search for specific traces matching a pattern. Helpful for discovering traces to use in understanding coding.",
   {
-    q: z.string().optional()
+    q: z.string().optional(),
+    from: z.string().optional().default("now-15m"),
+    to: z.string().optional().default("now"),
+    limit: z.number().default(100)
   },
   async (args) => {
     const result = await getTraces.execute(args);
@@ -228,6 +231,7 @@ server.tool(
   }
 );
 
+/*
 server.tool(
   "search-logs",
   "Search logs in Datadog with advanced filtering options. Use filter.query for search terms (e.g., 'service:web-app status:error'), from/to for time ranges (e.g., 'now-15m', 'now'), and sort to order results. Essential for investigating application issues.",
@@ -304,7 +308,7 @@ server.tool(
       content: [{ type: "text", text: JSON.stringify(result) }]
     };
   }
-);
+);*/
 
 // Start the server
 const transport = new StdioServerTransport();
